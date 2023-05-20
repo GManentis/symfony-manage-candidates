@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Candidate{% endblock %}
+
+{% block body %}
+    <h1>Candidate</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ candidate.id }}</td>
+            </tr>
+            <tr>
+                <th>LastName</th>
+                <td>{{ candidate.lastName }}</td>
+            </tr>
+            <tr>
+                <th>FirstName</th>
+                <td>{{ candidate.firstName }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ candidate.email }}</td>
+            </tr>
+            <tr>
+                <th>Mobile</th>
+                <td>{{ candidate.mobile }}</td>
+            </tr>
+            <tr>
+                <th>Resume</th>
+                <td>{% if candidate.resume is defined and candidate.resume is not null %}
+                        <a href='/candidate/{{ candidate.id }}/resume' download>Download Resume</a>
+                    {% else %}
+                       (Not uploaded)
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>ApplicationDate</th>
+                <td>{{ candidate.applicationDate ? candidate.applicationDate|date('Y-m-d') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a class="btn btn-info" style="color:white;" href="{{ path('app_candidate_index') }}">Back to list</a>
+
+    <a class="btn btn-primary" href="{{ path('app_candidate_edit', {'id': candidate.id}) }}">Edit</a>
+    <br><br>
+
+    {{ include('candidate/_delete_form.html.twig') }}
+{% endblock %}

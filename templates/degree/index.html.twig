@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Degree index{% endblock %}
+
+{% block body %}
+    <h1>Degree index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>DegreeTitle</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for degree in degrees %}
+            <tr>
+                <td>{{ degree.id }}</td>
+                <td>{{ degree.degreeTitle }}</td>
+                <td>
+                    <a href="{{ path('app_degree_show', {'id': degree.id}) }}">show</a>
+                    <a href="{{ path('app_degree_edit', {'id': degree.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_degree_new') }}" class="btn btn-success"> + Create new</a>
+
+    {% for errorMessage in app.flashes('errorDegree') %}
+    <div class="alert" style='margin-top: 50px'>
+        {{ errorMessage }}
+    </div>
+    {% endfor %}
+        <div style="margin-top:50px; text-align:center;">
+        <a href="{{ path('app_candidate_index') }}" class="btn btn-info" style="color: white;">Navigate To Candidates</a>
+    <div>
+    
+    
+
+{% endblock %}

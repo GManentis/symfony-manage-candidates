@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Degree{% endblock %}
+
+{% block body %}
+    <h1>Edit Degree</h1>
+
+    {{ include('degree/_form.html.twig', {'button_label': 'Update'}) }}
+    <span style="margin: 10px 0;">&nbsp</span>
+    {{ include('degree/_delete_form.html.twig') }}
+    <br>
+    <a href="{{ path('app_degree_index') }}" class="btn btn-info" style="color: white;">Back to list</a>
+
+
+{% endblock %}

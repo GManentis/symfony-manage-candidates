@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Candidate index{% endblock %}
+
+{% block body %}
+    <h1>Candidate index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>LastName</th>
+                <th>FirstName</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Degree</th>
+                <th>Resume</th>
+                <th>ApplicationDate</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for candidate in candidates %}
+            <tr>
+                <td>{{ candidate.id }}</td>
+                <td>{{ candidate.lastName }}</td>
+                <td>{{ candidate.firstName }}</td>
+                <td>{{ candidate.email }}</td>
+                <td>{% if candidate.mobile is defined and candidate.mobile is not null %}
+                       {{candidate.mobile}}
+                    {% else %}
+                       (N/A)
+                    {% endif %}</td></td>
+                <td>{% if candidate.degree is defined and candidate.degree is not null %}
+                        {{candidate.degree.degreeTitle}}
+                    {% else %}
+                       (Not Selected)
+                    {% endif %}</td>
+                <td>
+                    {% if candidate.resume is defined and candidate.resume is not null %}
+                        <a href='/candidate/{{ candidate.id }}/resume' download>Download Resume</a>
+                    {% else %}
+                       (Not uploaded)
+                    {% endif %}
+                </td>
+                <td>{{ candidate.applicationDate ? candidate.applicationDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_candidate_show', {'id': candidate.id}) }}">show</a>
+                    <a href="{{ path('app_candidate_edit', {'id': candidate.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="btn btn-success" href="{{ path('app_candidate_new') }}"> + Create New </a>
+    <div style="margin-top:50px; text-align:center;">
+        <a href="{{ path('app_degree_index') }}" class="btn btn-info" style="color: white;">Navigate To Degrees</a>
+    <div>
+{% endblock %}

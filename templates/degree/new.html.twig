@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Degree{% endblock %}
+
+{% block body %}
+    <h1>Create new Degree</h1>
+
+    {{ include('degree/_form.html.twig') }}
+
+    <a class="btn btn-info" style="color: white;" href="{{ path('app_degree_index') }}">back to list</a>
+{% endblock %}
