@@ -3,24 +3,35 @@
 namespace App\Test\Controller;
 
 use App\Entity\Candidate;
+use App\Entity\Degree;
+
 use App\Repository\CandidateRepository;
+use App\Repository\DegreeRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+
+
 
 class CandidateControllerTest extends WebTestCase
 {
     private KernelBrowser $client;
     private CandidateRepository $repository;
     private string $path = '/candidate/';
+    private DegreeRepository $degreeRepository;
+
+   
 
     protected function setUp(): void
     {
         $this->client = static::createClient();
         $this->repository = static::getContainer()->get('doctrine')->getRepository(Candidate::class);
+        $this->degreeRepository = static::getContainer()->get('doctrine')->getRepository(Degree::class);
 
         foreach ($this->repository->findAll() as $object) {
             $this->repository->remove($object, true);
         }
+
+
     }
 
     public function testIndex(): void
@@ -38,7 +49,11 @@ class CandidateControllerTest extends WebTestCase
     {
         $originalNumObjectsInRepository = count($this->repository->findAll());
 
-        $this->markTestIncomplete();
+        $fixtureDegree = new Degree();
+        $fixtureDegree->setDegreeTitle('My Title');
+        $this->degreeRepository->save($fixtureDegree, true);
+
+        //$this->markTestIncomplete();
         $this->client->request('GET', sprintf('%snew', $this->path));
 
         self::assertResponseStatusCodeSame(200);
@@ -46,11 +61,10 @@ class CandidateControllerTest extends WebTestCase
         $this->client->submitForm('Save', [
             'candidate[lastName]' => 'Testing',
             'candidate[firstName]' => 'Testing',
-            'candidate[email]' => 'Testing',
-            'candidate[mobile]' => 'Testing',
-            'candidate[resume]' => 'Testing',
-            'candidate[applicationDate]' => 'Testing',
-            'candidate[degree]' => 'Testing',
+            'candidate[email]' => 'test@mail.com',
+            'candidate[mobile]' => '6979200044',
+            //'candidate[resume]' => null,
+            'candidate[degree]' => $fixtureDegree->getId(),
         ]);
 
         self::assertResponseRedirects('/candidate/');
@@ -60,15 +74,13 @@ class CandidateControllerTest extends WebTestCase
 
     public function testShow(): void
     {
-        $this->markTestIncomplete();
+        //$this->markTestIncomplete();
         $fixture = new Candidate();
-        $fixture->setLastName('My Title');
-        $fixture->setFirstName('My Title');
-        $fixture->setEmail('My Title');
-        $fixture->setMobile('My Title');
-        $fixture->setResume('My Title');
-        $fixture->setApplicationDate('My Title');
-        $fixture->setDegree('My Title');
+        $fixture->setLastName('My Lastname');
+        $fixture->setFirstName('My firstname');
+        $fixture->setEmail('newmail@test.com');
+        $fixture->setMobile('6970000000');
+        $fixture->setApplicationDate(new \DateTime());
 
         $this->repository->save($fixture, true);
 
@@ -82,15 +94,19 @@ class CandidateControllerTest extends WebTestCase
 
     public function testEdit(): void
     {
-        $this->markTestIncomplete();
+        $fixtureDegree = new Degree();
+        $fixtureDegree->setDegreeTitle('My Title');
+        $this->degreeRepository->save($fixtureDegree, true);
+
+
+        //$this->markTestIncomplete();
         $fixture = new Candidate();
         $fixture->setLastName('My Title');
         $fixture->setFirstName('My Title');
-        $fixture->setEmail('My Title');
-        $fixture->setMobile('My Title');
-        $fixture->setResume('My Title');
-        $fixture->setApplicationDate('My Title');
-        $fixture->setDegree('My Title');
+        $fixture->setEmail('myemail@test.com');
+        $fixture->setMobile('0000000000');
+        $fixture->setApplicationDate(new \DateTime());
+
 
         $this->repository->save($fixture, true);
 
@@ -99,40 +115,36 @@ class CandidateControllerTest extends WebTestCase
         $this->client->submitForm('Update', [
             'candidate[lastName]' => 'Something New',
             'candidate[firstName]' => 'Something New',
-            'candidate[email]' => 'Something New',
-            'candidate[mobile]' => 'Something New',
-            'candidate[resume]' => 'Something New',
-            'candidate[applicationDate]' => 'Something New',
-            'candidate[degree]' => 'Something New',
+            'candidate[email]' => 'something.new@test.com',
+            'candidate[mobile]' => '6972000001',
+            'candidate[degree]' => $fixtureDegree->getId(),
+            'candidate[resume]' => null
         ]);
 
-        self::assertResponseRedirects('/candidate/');
+        self::assertResponseRedirects("/candidate/");
 
         $fixture = $this->repository->findAll();
 
         self::assertSame('Something New', $fixture[0]->getLastName());
         self::assertSame('Something New', $fixture[0]->getFirstName());
-        self::assertSame('Something New', $fixture[0]->getEmail());
-        self::assertSame('Something New', $fixture[0]->getMobile());
-        self::assertSame('Something New', $fixture[0]->getResume());
-        self::assertSame('Something New', $fixture[0]->getApplicationDate());
-        self::assertSame('Something New', $fixture[0]->getDegree());
+        self::assertSame('something.new@test.com', $fixture[0]->getEmail());
+        self::assertSame('6972000001', $fixture[0]->getMobile());
+        self::assertSame($fixtureDegree->getDegreeTitle(), $fixture[0]->getDegree()->getDegreeTitle());
     }
 
     public function testRemove(): void
     {
-        $this->markTestIncomplete();
+        //$this->markTestIncomplete();
 
         $originalNumObjectsInRepository = count($this->repository->findAll());
 
         $fixture = new Candidate();
         $fixture->setLastName('My Title');
         $fixture->setFirstName('My Title');
-        $fixture->setEmail('My Title');
-        $fixture->setMobile('My Title');
-        $fixture->setResume('My Title');
-        $fixture->setApplicationDate('My Title');
-        $fixture->setDegree('My Title');
+        $fixture->setEmail('my.email@test.com');
+        $fixture->setMobile('0000000000');
+        $fixture->setApplicationDate(new \DateTime());
+
 
         $this->repository->save($fixture, true);
 

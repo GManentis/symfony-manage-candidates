@@ -34,27 +34,31 @@ class DegreeControllerTest extends WebTestCase
         // self::assertSame('Some text on the page', $crawler->filter('.p')->first());
     }
 
+
     public function testNew(): void
     {
         $originalNumObjectsInRepository = count($this->repository->findAll());
 
-        $this->markTestIncomplete();
+        //$this->markTestIncomplete();
         $this->client->request('GET', sprintf('%snew', $this->path));
 
         self::assertResponseStatusCodeSame(200);
 
+        
         $this->client->submitForm('Save', [
             'degree[degreeTitle]' => 'Testing',
         ]);
 
-        self::assertResponseRedirects('/degree/');
 
+        self::assertResponseRedirects('/degree/');
         self::assertSame($originalNumObjectsInRepository + 1, count($this->repository->findAll()));
+        
     }
+
 
     public function testShow(): void
     {
-        $this->markTestIncomplete();
+        //$this->markTestIncomplete();
         $fixture = new Degree();
         $fixture->setDegreeTitle('My Title');
 
@@ -70,7 +74,7 @@ class DegreeControllerTest extends WebTestCase
 
     public function testEdit(): void
     {
-        $this->markTestIncomplete();
+        //$this->markTestIncomplete();
         $fixture = new Degree();
         $fixture->setDegreeTitle('My Title');
 
@@ -89,9 +93,10 @@ class DegreeControllerTest extends WebTestCase
         self::assertSame('Something New', $fixture[0]->getDegreeTitle());
     }
 
+    
     public function testRemove(): void
     {
-        $this->markTestIncomplete();
+        //$this->markTestIncomplete();
 
         $originalNumObjectsInRepository = count($this->repository->findAll());
 
@@ -108,4 +113,6 @@ class DegreeControllerTest extends WebTestCase
         self::assertSame($originalNumObjectsInRepository, count($this->repository->findAll()));
         self::assertResponseRedirects('/degree/');
     }
+    
+
 }

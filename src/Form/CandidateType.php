@@ -73,7 +73,7 @@ class CandidateType extends AbstractType
                         'maxMessage' => 'Mobile must not exceed {{ limit }} characters.',
                     ]),
                     new Regex([
-                        'pattern' => '/^[0-9]$/',
+                        'pattern' => '/^[0-9]+$/',
                         'message' => 'Please check the inserted phone.',
                     ]),
                 ],
