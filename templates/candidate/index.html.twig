@@ -38,7 +38,7 @@
                     {% endif %}</td>
                 <td>
                     {% if candidate.resume is defined and candidate.resume is not null %}
-                        <a href='/candidate/{{ candidate.id }}/resume' download>Download Resume</a>
+                        <a href="{{ path('app_candidate_resume', {'id': candidate.id}) }}" download>Download Resume</a>
                     {% else %}
                        (Not uploaded)
                     {% endif %}
