@@ -25,7 +25,12 @@
             </tr>
             <tr>
                 <th>Mobile</th>
-                <td>{{ candidate.mobile }}</td>
+                <td>{% if candidate.mobile is defined and candidate.mobile is not null %}
+                        candidate.mobile
+                    {% else %}
+                       (Not available)
+                    {% endif %}
+                </td>
             </tr>
             <tr>
                 <th>Resume</th>

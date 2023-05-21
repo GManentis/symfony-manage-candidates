@@ -74,6 +74,8 @@ class CandidateController extends AbstractController
     #[Route('/{id}/resume', name: 'app_candidate_resume', methods: ['GET'])]
     public function candidateResume(Candidate $candidate) : Response
     {
+
+        if(!$candidate->getResume()) return new Response("Resume was not found for the candidate",404);
         // Replace with the actual path to your Blob file
         // Create the response object
         $response = new StreamedResponse(function () use ($candidate) {
