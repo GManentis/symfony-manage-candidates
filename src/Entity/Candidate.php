@@ -41,6 +41,7 @@ class Candidate
     #[ORM\Column(length: 255, nullable: true)]   
     private $resumeFileExtension = null;
 
+    private $hasUploadedResume = false;
 
     public function getId(): ?int
     {
@@ -152,6 +153,15 @@ class Candidate
     {
         $this->resumeFileExtension = $resumeFileExtension;
 
+        return $this;
+    }
+
+    public function getHasUploadedResume(){
+        return $this->hasUploadedResume;
+    }
+
+    public function setHasUploadedResume($input = null){
+        $this->hasUploadedResume = $input ? true : false;
         return $this;
     }
 }

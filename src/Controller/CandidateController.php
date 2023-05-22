@@ -10,8 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -91,13 +90,57 @@ class CandidateController extends AbstractController
         return $response;
     }
 
-    #[Route('/{id}/edit', name: 'app_candidate_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Candidate $candidate, CandidateRepository $candidateRepository): Response
+    #[Route('/{id}/resume-delete', name: 'app_candidate_resume_delete', methods: ['GET'])]
+    public function deleteCandidateResume(Candidate $candidate, CandidateRepository $candidateRepository) : Response
     {
+        if(!$candidate->getResume()) return new Response("Resume was not found for the candidate",404);
+        $candidate->setResumeFileExtension(null);
+        $candidate->setResumeFileType(null);
+        $candidate->setResume(null);
+
+        $candidateRepository->save($candidate, true);
+
         $form = $this->createForm(CandidateType::class, $candidate);
+        //$form->handleRequest($request);
+
+        return $this->renderForm('candidate/edit.html.twig', [
+            'candidate' => $candidate,
+            'form' => $form,
+        ]);
+
+    }
+
+    #[Route('/{id}/edit', name: 'app_candidate_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Candidate $candidate, EntityManagerInterface $entityManager): Response
+    {    
+        //dd($candidate);
+        $form = $this->createForm(CandidateType::class); //detached from form because I noticed that autoupdates the form
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $candidateForUpdate = $entityManager->getRepository(Candidate::class)->find($candidate->getId());
+            //dd($candidateForUpdate);
+            $formData = $form->getData();
+            
+            $candidateForUpdate->setFirstName($formData->getFirstName());
+            $candidateForUpdate->setLastName($formData->getLastName());
+            $candidateForUpdate->setEmail($formData->getEmail());
+            $candidateForUpdate->setMobile($formData->getMobile());
+            $candidateForUpdate->setDegree($formData->getDegree());
+
+            //dd($formData->getResume());
+            
+            if ($formData->getResume()) {
+                $file = $formData->getResume();
+                $candidateForUpdate->setResume(file_get_contents($file->getPathname()));
+                $candidateForUpdate->setResumeFileExtension($file->getClientOriginalExtension());
+                $candidateForUpdate->setResumeFileType($file->getMimeType());
+            }
+
+            $entityManager->flush();
+
+            //Below code kept as backup if change goes south
+            /*
             $file = $form->get('resume')->getData();
             $resumeFileType = null;
             $resumeFileExtension = null;
@@ -112,10 +155,15 @@ class CandidateController extends AbstractController
             $candidate->setResumeFileType($resumeFileType);
 
             $candidateRepository->save($candidate, true);
-
+            */
             return $this->redirectToRoute('app_candidate_index', [], Response::HTTP_SEE_OTHER);
         }
 
+        $form = $this->createForm(CandidateType::class, $candidate); 
+        $form->handleRequest($request);
+
+        $candidate->setHasUploadedResume($candidate->getResume());
+        //dd($candidate);
         return $this->renderForm('candidate/edit.html.twig', [
             'candidate' => $candidate,
             'form' => $form,

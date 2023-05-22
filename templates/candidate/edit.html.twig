@@ -6,6 +6,9 @@
     <h1>Edit Candidate</h1>
 
     {{ include('candidate/_form.html.twig', {'button_label': 'Update'}) }}
+    {% if candidate.hasUploadedResume == true %}
+        <div style="margin:10px 0;">Current Uploaded Resume: <a href="{{ path('app_candidate_resume', {'id': candidate.id}) }}" download>Download Resume</a><a href="{{ path('app_candidate_resume_delete', {'id': candidate.id}) }}" class="btn btn-warning" style="color: white; margin-left:15px">Delete Resume</a></div>       
+    {% endif %}
     <span style="margin: 10px 0;">&nbsp</span>
     {{ include('candidate/_delete_form.html.twig') }}
     <br><br>
