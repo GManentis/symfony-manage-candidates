@@ -103,10 +103,7 @@ class CandidateController extends AbstractController
         $form = $this->createForm(CandidateType::class, $candidate);
         //$form->handleRequest($request);
 
-        return $this->renderForm('candidate/edit.html.twig', [
-            'candidate' => $candidate,
-            'form' => $form,
-        ]);
+        return $this->redirectToRoute('app_candidate_edit', ['id' => $candidate->getId()]);
 
     }
 
